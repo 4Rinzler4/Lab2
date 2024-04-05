@@ -1,109 +1,92 @@
 ﻿using System;
 
-class Time
+class Program
 {
-    static void Main(string[] args)
+    static void Main()
     {
-        bool isValidInput = false;
-        string TimeNumber = "";
+        Console.WriteLine("Введіть розмірність матриці (nxm):");
+        int n = ReadPositiveInteger("n"); // Зчитування кількості рядків матриці
+        int m = ReadPositiveInteger("m"); // Зчитування кількості стовпців матриці
 
-        while (!isValidInput)
+        int[,] matrix = new int[n, m]; // Створення матриці розмірності nxm
+
+        // Заповнення матриці випадковими числами від -100 до 100
+        Random rnd = new Random();
+        for (int i = 0; i < n; i++)
         {
-            Console.WriteLine("Введіть номер години (1-24):");
-            string input = Console.ReadLine();
-
-            if (int.TryParse(input, out int n) && n >= 1 && n <= 24)
+            for (int j = 0; j < m; j++)
             {
-                isValidInput = true;
-
-                switch (n)
-                {
-                    case 1:
-                        TimeNumber = "Перша година ночі";
-                        break;
-                    case 2:
-                        TimeNumber = "Друга година ночі";
-                        break;
-                    case 3:
-                        TimeNumber = "Третя година ночі";
-                        break;
-                    case 4:
-                        TimeNumber = "Четверта година ночі";
-                        break;
-                    case 5:
-                        TimeNumber = "П`ята година ранку";
-                        break;
-                    case 6:
-                        TimeNumber = "Шоста година ранку";
-                        break;
-                    case 7:
-                        TimeNumber = "Сьома година ранку";
-                        break;
-                    case 8:
-                        TimeNumber = "Восьма година ранку";
-                        break;
-                    case 9:
-                        TimeNumber = "Дев`ята година ранку";
-                        break;
-                    case 10:
-                        TimeNumber = "Десята година ранку";
-                        break;
-                    case 11:
-                        TimeNumber = "Одинадцята година ранку";
-                        break;
-                    case 12:
-                        TimeNumber = "Дванадцята година дня";
-                        break;
-                    case 13:
-                        TimeNumber = "Тринадцята година дня";
-                        break;
-                    case 14:
-                        TimeNumber = "Чотирнадцята година дня";
-                        break;
-                    case 15:
-                        TimeNumber = "П`ятнадцята година дня";
-                        break;
-                    case 16:
-                        TimeNumber = "Шістнадцята година дня";
-                        break;
-                    case 17:
-                        TimeNumber = "Сімнадцята година дня";
-                        break;
-                    case 18:
-                        TimeNumber = "Вісімнадцята година вечора";
-                        break;
-                    case 19:
-                        TimeNumber = "Дев`ятнадцята година вечора";
-                        break;
-                    case 20:
-                        TimeNumber = "Двадцята година вечора";
-                        break;
-                    case 21:
-                        TimeNumber = "Двадцять перша година вечора";
-                        break;
-                    case 22:
-                        TimeNumber = "Двадцять друга година вечора";
-                        break;
-                    case 23:
-                        TimeNumber = "Двадцять третя година вечора";
-                        break;
-                    case 24:
-                        TimeNumber = "Двадцять четверта година ночі";
-                        break;
-                    default:
-                        TimeNumber = "Невірний номер години";
-                        isValidInput = false;
-                        break;
-                }
-
-                Console.WriteLine($"Період дня за номером години {n}: {TimeNumber}");
-            }
-            else
-            {
-                Console.WriteLine("Невірний ввід. Будь ласка, введіть ціле число від 1 до 24.");
+                matrix[i, j] = rnd.Next(-100, 101); // Генерувати числа від -100 до 100
             }
         }
 
-        Console.ReadLine();
+        // Виведення початкової матриці
+        Console.WriteLine("Початкова матриця:");
+        PrintMatrix(matrix);
+
+        // Введення номерів стовпців, які треба поміняти
+        Console.Write("Введіть номер першого стовпця (k): ");
+        int k = ReadColumnNumber(m); // Зчитування номера першого стовпця
+        Console.Write("Введіть номер другого стовпця (p): ");
+        int p = ReadColumnNumber(m); // Зчитування номера другого стовпця
+
+        // Поміняти місцями вказані стовпці
+        SwapColumns(matrix, k - 1, p - 1);
+
+        // Виведення результату
+        Console.WriteLine($"Результат: стовпці {k} та {p} були поміняні місцями.");
+        PrintMatrix(matrix);
+    }
+
+    // Метод для зчитування додатнього цілого числа з консолі
+    static int ReadPositiveInteger(string prompt)
+    {
+        int value;
+        Console.Write($"Введіть значення {prompt}: ");
+        while (!int.TryParse(Console.ReadLine(), out value) || value <= 0)
+        {
+            Console.WriteLine($"Введене значення для {prompt} не є додатнім цілим числом. Будь ласка, введіть додатнє ціле число.");
+            Console.Write($"Введіть значення {prompt}: ");
+        }
+        return value;
+    }
+
+    // Метод для зчитування номера стовпця
+    static int ReadColumnNumber(int maxColumn)
+    {
+        int value;
+        while (!int.TryParse(Console.ReadLine(), out value) || value < 1 || value > maxColumn)
+        {
+            Console.WriteLine($"Введіть ціле число в діапазоні від 1 до {maxColumn}.");
+            Console.Write("Введіть номер стовпця: ");
+        }
+        return value;
+    }
+
+    // Метод для обміну місцями двох стовпців в матриці
+    static void SwapColumns(int[,] matrix, int column1, int column2)
+    {
+        int rows = matrix.GetLength(0);
+        for (int i = 0; i < rows; i++)
+        {
+            int temp = matrix[i, column1];
+            matrix[i, column1] = matrix[i, column2];
+            matrix[i, column2] = temp;
+        }
+    }
+
+    // Метод для виведення матриці на екран
+    static void PrintMatrix(int[,] matrix)
+    {
+        int rows = matrix.GetLength(0);
+        int columns = matrix.GetLength(1);
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < columns; j++)
+            {
+                Console.Write(matrix[i, j] + "\t");
+            }
+            Console.WriteLine();
+        }
     }
 }
